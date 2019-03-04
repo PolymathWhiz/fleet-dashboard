@@ -76,7 +76,30 @@ export default {
     };
   },
   methods: {
-    async register() {}
+    async register() {
+      try {
+        const response = await this.$http.post("/auth/register", {
+          email: this.email,
+          password: this.password,
+          first_name: this.first_name,
+          last_name: this.last_name
+        });
+        // save data to localstorage
+        localStorage.clear();
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("user_data", JSON.stringify(response.data.data));
+        // move to next page
+        this.$router.push({
+          path: "/dashboard"
+        });
+      } catch (error) {
+        if (error.response) {
+          const message = error.response.data.message;
+          return alert(message);
+        }
+      }
+    }
   }
 };
 </script>

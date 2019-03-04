@@ -52,7 +52,28 @@ export default {
     };
   },
   methods: {
-    async login() {}
+    async login() {
+      try {
+        const response = await this.$http.post("/auth/login", {
+          email: this.email,
+          password: this.password
+        });
+        // save data to localstorage
+        localStorage.clear();
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("partner", JSON.stringify(response.data.data));
+        // move to next page
+        this.$router.push({
+          path: "/dashboard"
+        });
+      } catch (error) {
+        if (error.response) {
+          const message = error.response.data.message;
+          alert(message);
+        }
+      }
+    }
   }
 };
 </script>
